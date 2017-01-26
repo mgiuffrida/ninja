@@ -210,6 +210,7 @@ void Usage(const BuildConfig& config) {
 "  -v       show all command lines while building\n"
 "\n"
 "  -d MODE  enable debugging (use -d list to list modes)\n"
+"  -R       force raw output for ANSI \"color\" escape sequences\n"
 "  -t TOOL  run a subtool (use -t list to list subtools)\n"
 "    terminates toplevel options; further flags are passed to the tool\n"
 "  -w FLAG  adjust warnings (use -w list to list warnings)\n",
@@ -1027,7 +1028,7 @@ int ReadFlags(int* argc, char*** argv,
 
   int opt;
   while (!options->tool &&
-         (opt = getopt_long(*argc, *argv, "d:f:j:k:l:nt:vw:C:h", kLongOptions,
+         (opt = getopt_long(*argc, *argv, "d:f:j:k:l:nt:vw:C:Rh", kLongOptions,
                             NULL)) != -1) {
     switch (opt) {
       case 'd':
@@ -1082,6 +1083,9 @@ int ReadFlags(int* argc, char*** argv,
         break;
       case 'C':
         options->working_dir = optarg;
+        break;
+      case 'R':
+        config->preserve_color_sequences = true;
         break;
       case OPT_VERSION:
         printf("%s\n", kNinjaVersion);

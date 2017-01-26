@@ -145,16 +145,18 @@ void BuildStatus::BuildEdgeFinished(Edge* edge,
     // be run with a flag that forces them to always print color escape codes.
     // To make sure these escape codes don't show up in a file if ninja's output
     // is piped to a file, ninja strips ansi escape codes again if it's not
-    // writing to a |smart_terminal_|.
+    // writing to a |smart_terminal_|. The -R flag prevents ninja from stripping
+    // color codes, useful for piping to a utility that can handle color codes.
     // (Launching subprocesses in pseudo ttys doesn't work because there are
     // only a few hundred available on some systems, and ninja can launch
     // thousands of parallel compile commands.)
-    // TODO: There should be a flag to disable escape code stripping.
     string final_output;
-    if (!printer_.is_smart_terminal())
-      final_output = StripAnsiEscapeCodes(output);
-    else
+    if (!printer_.is_smart_terminal()) {
+      final_output =
+          StripAnsiEscapeCodes(output, config_.preserve_color_sequences);
+    } else {
       final_output = output;
+    }
     printer_.PrintOnNewLine(final_output);
   }
 }
